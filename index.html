@@ -1,0 +1,546 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Directory</title>
+    <style>
+        :root {
+            --primary-color: #0a4d68;
+            --secondary-color: #088395;
+            --light-color: #f7f7f7;
+            --dark-color: #333;
+            --danger-color: #d9534f;
+            --success-color: #5cb85c;
+            --warning-color: #f0ad4e;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: #eef5f9;
+            color: var(--dark-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #app {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .view {
+            width: 100%;
+            max-width: 450px;
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: none; /* Hidden by default */
+        }
+
+        .view.active {
+            display: block;
+        }
+        
+        #directoryView {
+            max-width: 1200px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 0.85rem;
+            border: none;
+            border-radius: var(--border-radius);
+            background-color: var(--primary-color);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .nav-link {
+            display: block;
+            margin-top: 1.5rem;
+            text-align: center;
+            color: var(--secondary-color);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .message.error {
+            background-color: #f2dede;
+            color: var(--danger-color);
+            display: block;
+        }
+
+        .message.success {
+            background-color: #dff0d8;
+            color: var(--success-color);
+            display: block;
+        }
+
+        #forgotPasswordView .warning-text {
+            color: var(--danger-color);
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        #retrievedPassword {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f0f0f0;
+            border-radius: var(--border-radius);
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        /* Directory View Styles */
+        #directory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        #directory-header h2 {
+            margin-bottom: 0;
+            text-align: left;
+        }
+
+        #search-bar {
+            flex-grow: 1;
+            max-width: 400px;
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        #logout-btn {
+            width: auto;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--danger-color);
+        }
+
+        #logout-btn:hover {
+            background-color: #c9302c;
+        }
+
+        #userCardsContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .user-card {
+            background: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .user-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-card .designation {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .user-card p {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .user-card p strong {
+            color: #444;
+        }
+
+        #app-footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            #directory-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            #search-bar {
+                max-width: 100%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        
+        <!-- Registration View -->
+        <div id="registerView" class="view">
+            <h2>Create an Account</h2>
+            <div id="registerMessage" class="message"></div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regFullName">Full Name</label>
+                    <input type="text" id="regFullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email Address</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="regDesignation">Designation</label>
+                    <input type="text" id="regDesignation" required>
+                </div>
+                <div class="form-group">
+                    <label for="regAddress">Address</label>
+                    <input type="text" id="regAddress" required>
+                </div>
+                <div class="form-group">
+                    <label for="regContactInfo">Contact Info (Phone)</label>
+                    <input type="tel" id="regContactInfo" required>
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+            <a class="nav-link" onclick="switchView('loginView')">Already have an account? Login</a>
+        </div>
+
+        <!-- Login View -->
+        <div id="loginView" class="view">
+            <h2>Team Directory Login</h2>
+            <div id="loginMessage" class="message"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <a class="nav-link" onclick="switchView('registerView')">Don't have an account? Register</a>
+            <a class="nav-link" onclick="switchView('forgotPasswordView')">Forgot Password?</a>
+        </div>
+
+        <!-- Forgot Password View -->
+        <div id="forgotPasswordView" class="view">
+            <h2>Retrieve Password</h2>
+            <p class="warning-text">For demonstration only. Insecure.</p>
+            <div id="forgotPasswordMessage" class="message"></div>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgotEmail">Enter your Email Address</label>
+                    <input type="email" id="forgotEmail" required>
+                </div>
+                <button type="submit" class="btn">Retrieve Password</button>
+            </form>
+            <div id="retrievedPasswordContainer" style="display: none;">
+                <p><strong>Your password is:</strong></p>
+                <p id="retrievedPassword"></p>
+            </div>
+            <a class="nav-link" onclick="switchView('loginView')">Back to Login</a>
+        </div>
+        
+        <!-- Main Team Directory View -->
+        <div id="directoryView" class="view">
+            <div id="directory-header">
+                <h2>Team Directory</h2>
+                <input type="search" id="search-bar" placeholder="Search by name or designation...">
+                <button id="logout-btn" class="btn">Logout</button>
+            </div>
+            <div id="userCardsContainer">
+                <!-- User cards will be dynamically inserted here -->
+            </div>
+        </div>
+
+    </div>
+
+    <footer id="app-footer">
+        Notice: This is a local-only application. All data is stored exclusively in this browser.
+    </footer>
+
+    <script>
+        // IMPORTANT: Storing passwords in plaintext in localStorage is highly insecure and is for demonstration purposes only in this application.
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const storageKey = 'teamDirectoryUsers';
+
+            // View elements
+            const views = {
+                loginView: document.getElementById('loginView'),
+                registerView: document.getElementById('registerView'),
+                forgotPasswordView: document.getElementById('forgotPasswordView'),
+                directoryView: document.getElementById('directoryView'),
+            };
+
+            // Form elements
+            const registerForm = document.getElementById('registerForm');
+            const loginForm = document.getElementById('loginForm');
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+
+            // Other elements
+            const logoutBtn = document.getElementById('logout-btn');
+            const searchBar = document.getElementById('search-bar');
+            const userCardsContainer = document.getElementById('userCardsContainer');
+
+            // --- DATA HELPERS ---
+            const getUsers = () => {
+                const users = localStorage.getItem(storageKey);
+                return users ? JSON.parse(users) : [];
+            };
+
+            const saveUsers = (users) => {
+                localStorage.setItem(storageKey, JSON.stringify(users));
+            };
+            
+            // --- UI HELPERS ---
+            const switchView = (viewName) => {
+                Object.values(views).forEach(view => view.classList.remove('active'));
+                if (views[viewName]) {
+                    views[viewName].classList.add('active');
+                }
+            };
+
+            const displayMessage = (viewId, messageText, isError = true) => {
+                const messageEl = document.getElementById(`${viewId}Message`);
+                if (messageEl) {
+                    messageEl.textContent = messageText;
+                    messageEl.className = `message ${isError ? 'error' : 'success'}`;
+                }
+            };
+            
+            const clearMessages = () => {
+                document.querySelectorAll('.message').forEach(el => {
+                    el.textContent = '';
+                    el.className = 'message';
+                });
+            };
+
+            // --- CORE LOGIC ---
+            const handleRegister = (e) => {
+                e.preventDefault();
+                clearMessages();
+                
+                const fullName = document.getElementById('regFullName').value;
+                const email = document.getElementById('regEmail').value.toLowerCase();
+                const password = document.getElementById('regPassword').value;
+                const designation = document.getElementById('regDesignation').value;
+                const address = document.getElementById('regAddress').value;
+                const contactInfo = document.getElementById('regContactInfo').value;
+
+                const users = getUsers();
+                if (users.some(user => user.email === email)) {
+                    displayMessage('register', 'An account with this email already exists.');
+                    return;
+                }
+
+                const newUser = {
+                    id: email, // Using email as unique ID
+                    fullName,
+                    email,
+                    password,
+                    designation,
+                    address,
+                    contactInfo,
+                };
+
+                users.push(newUser);
+                saveUsers(users);
+
+                displayMessage('login', 'Registration successful! Please log in.', false);
+                registerForm.reset();
+                switchView('loginView');
+            };
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                clearMessages();
+
+                const email = document.getElementById('loginEmail').value.toLowerCase();
+                const password = document.getElementById('loginPassword').value;
+
+                const users = getUsers();
+                const user = users.find(u => u.email === email && u.password === password);
+
+                if (user) {
+                    loginForm.reset();
+                    switchView('directoryView');
+                    renderDirectory();
+                } else {
+                    displayMessage('login', 'Invalid email or password.');
+                }
+            };
+            
+            const handleForgotPassword = (e) => {
+                e.preventDefault();
+                clearMessages();
+                
+                const retrievedPasswordContainer = document.getElementById('retrievedPasswordContainer');
+                const retrievedPasswordEl = document.getElementById('retrievedPassword');
+                retrievedPasswordContainer.style.display = 'none';
+
+
+                const email = document.getElementById('forgotEmail').value.toLowerCase();
+                const users = getUsers();
+                const user = users.find(u => u.email === email);
+                
+                if (user) {
+                    retrievedPasswordEl.textContent = user.password;
+                    retrievedPasswordContainer.style.display = 'block';
+                } else {
+                    displayMessage('forgotPassword', 'No user found with that email address.');
+                }
+            };
+
+            const handleLogout = () => {
+                switchView('loginView');
+            };
+
+            const renderDirectory = (filter = '') => {
+                const users = getUsers();
+                const searchTerm = filter.toLowerCase();
+                
+                const filteredUsers = users.filter(user => 
+                    user.fullName.toLowerCase().includes(searchTerm) || 
+                    user.designation.toLowerCase().includes(searchTerm)
+                );
+
+                userCardsContainer.innerHTML = '';
+
+                if (filteredUsers.length === 0) {
+                    userCardsContainer.innerHTML = '<p>No users found.</p>';
+                    return;
+                }
+
+                filteredUsers.forEach(user => {
+                    const card = document.createElement('div');
+                    card.className = 'user-card';
+                    card.innerHTML = `
+                        <h3>${user.fullName}</h3>
+                        <p class="designation">${user.designation}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Contact:</strong> ${user.contactInfo}</p>
+                        <p><strong>Address:</strong> ${user.address}</p>
+                    `;
+                    userCardsContainer.appendChild(card);
+                });
+            };
+
+            const handleSearch = (e) => {
+                renderDirectory(e.target.value);
+            };
+
+            // --- EVENT LISTENERS ---
+            registerForm.addEventListener('submit', handleRegister);
+            loginForm.addEventListener('submit', handleLogin);
+            forgotPasswordForm.addEventListener('submit', handleForgotPassword);
+            logoutBtn.addEventListener('click', handleLogout);
+            searchBar.addEventListener('input', handleSearch);
+
+            // Make switchView globally accessible from HTML onclick
+            window.switchView = (viewName) => {
+                clearMessages();
+                switchView(viewName);
+            };
+
+            // --- INITIALIZATION ---
+            // If no users, go to register, otherwise login.
+            if (getUsers().length === 0) {
+                 switchView('registerView');
+            } else {
+                 switchView('loginView');
+            }
+        });
+    </script>
+
+</body>
+</html> 
