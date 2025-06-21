@@ -1,0 +1,343 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insta-AI</title>
+    <style>
+        :root {
+            --background-color: #121212;
+            --surface-color: #1E1E1E;
+            --primary-text-color: #E0E0E0;
+            --secondary-text-color: #BDBDBD;
+            --accent-color: #00C896;
+            --accent-text-color: #121212;
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--primary-text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-text-color);
+            font-weight: 700;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        #text-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            background-color: var(--surface-color);
+            color: var(--primary-text-color);
+            border: 1px solid #333;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        #text-input::placeholder {
+            color: var(--secondary-text-color);
+            opacity: 0.7;
+        }
+
+        #text-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(0, 200, 150, 0.2);
+        }
+        
+        #generate-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: var(--accent-text-color);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s, transform 0.1s;
+            align-self: flex-end;
+        }
+
+        #generate-btn:hover:not(:disabled) {
+            background-color: #00e0a8;
+        }
+        
+        #generate-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        #generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .post-card {
+            background-color: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .post-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.75rem;
+        }
+        
+        .post-card-header h3 {
+            color: var(--primary-text-color);
+            font-size: 1.2rem;
+        }
+
+        .post-card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .card-btn {
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .card-btn:hover {
+            background-color: var(--accent-color);
+            color: var(--accent-text-color);
+        }
+        
+        .card-btn.delete-btn {
+            border-color: #888;
+            color: #888;
+        }
+        
+        .card-btn.delete-btn:hover {
+            background-color: #e53935;
+            border-color: #e53935;
+            color: #fff;
+        }
+
+        .post-card-content {
+            color: var(--secondary-text-color);
+            white-space: pre-wrap; /* preserves line breaks within the post */
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--secondary-text-color);
+            font-size: 0.9rem;
+            padding-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <header>
+            <h1>Insta-AI ✨</h1>
+        </header>
+
+        <section class="input-section">
+            <textarea id="text-input" placeholder="Write or paste a blog, a tweet, a youtube video script or any text content and Insta-AI will generate short-form posts for you..."></textarea>
+            <button id="generate-btn" disabled>Generate</button>
+        </section>
+
+        <section id="output-section">
+            <div id="posts-container">
+                <!-- Generated posts will appear here -->
+            </div>
+        </section>
+        
+        <footer>Made with Insta-AI</footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textInput = document.getElementById('text-input');
+            const generateBtn = document.getElementById('generate-btn');
+            const postsContainer = document.getElementById('posts-container');
+            const storageKey = 'instaAiPosts';
+
+            // --- Event Listeners ---
+            textInput.addEventListener('input', handleTextInput);
+            generateBtn.addEventListener('click', handleGenerateClick);
+            postsContainer.addEventListener('click', handleCardActions);
+
+            // --- Initialization ---
+            loadPostsFromStorage();
+            handleTextInput(); // Set initial button state
+
+            // --- Core Functions ---
+
+            function handleTextInput() {
+                generateBtn.disabled = textInput.value.trim().length === 0;
+            }
+
+            function handleGenerateClick() {
+                const inputText = textInput.value.trim();
+                if (!inputText) return;
+
+                // Heuristic: Split by one or more empty lines
+                const postsArray = inputText
+                    .split(/\n\s*\n/)
+                    .map(p => p.trim())
+                    .filter(p => p.length > 0);
+                
+                savePostsToStorage(postsArray);
+                renderPosts(postsArray);
+            }
+
+            function handleCardActions(event) {
+                const target = event.target;
+                
+                // Copy action
+                if (target.classList.contains('copy-btn')) {
+                    const postCard = target.closest('.post-card');
+                    if (postCard) {
+                        const contentElement = postCard.querySelector('.post-card-content');
+                        copyTextToClipboard(contentElement.textContent, target);
+                    }
+                }
+                
+                // Delete action
+                if (target.classList.contains('delete-btn')) {
+                    const postCard = target.closest('.post-card');
+                    if (postCard && postCard.dataset.index) {
+                        const indexToDelete = parseInt(postCard.dataset.index, 10);
+                        deletePost(indexToDelete);
+                    }
+                }
+            }
+            
+            // --- Rendering and DOM Manipulation ---
+
+            function renderPosts(posts) {
+                postsContainer.innerHTML = ''; // Clear existing posts
+                if (posts.length === 0) {
+                    // Optionally, show a message when no posts are available
+                    return;
+                }
+                
+                posts.forEach((post, index) => {
+                    const cardElement = createPostCard(post, index);
+                    postsContainer.appendChild(cardElement);
+                });
+            }
+
+            function createPostCard(text, index) {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'post-card';
+                cardDiv.dataset.index = index;
+
+                cardDiv.innerHTML = `
+                    <div class="post-card-header">
+                        <h3>Post ${index + 1}</h3>
+                        <div class="post-card-actions">
+                            <button class="card-btn copy-btn">Copy</button>
+                            <button class="card-btn delete-btn">Delete</button>
+                        </div>
+                    </div>
+                    <p class="post-card-content">${text}</p>
+                `;
+                return cardDiv;
+            }
+
+            // --- Helper and Storage Functions ---
+
+            function deletePost(index) {
+                let posts = getPostsFromStorage();
+                posts.splice(index, 1); // Remove the post at the specified index
+                savePostsToStorage(posts);
+                renderPosts(posts); // Re-render the list
+            }
+
+            function copyTextToClipboard(text, buttonElement) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = buttonElement.textContent;
+                    buttonElement.textContent = 'Copied!';
+                    buttonElement.style.backgroundColor = 'var(--accent-color)';
+                    buttonElement.style.color = 'var(--accent-text-color)';
+                    
+                    setTimeout(() => {
+                        buttonElement.textContent = originalText;
+                        buttonElement.style.backgroundColor = '';
+                        buttonElement.style.color = '';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    alert('Could not copy text to clipboard.');
+                });
+            }
+
+            function savePostsToStorage(postsArray) {
+                localStorage.setItem(storageKey, JSON.stringify(postsArray));
+            }
+
+            function getPostsFromStorage() {
+                const storedPosts = localStorage.getItem(storageKey);
+                return storedPosts ? JSON.parse(storedPosts) : [];
+            }
+            
+            function loadPostsFromStorage() {
+                const posts = getPostsFromStorage();
+                renderPosts(posts);
+            }
+        });
+    </script>
+</body>
+</html> 
