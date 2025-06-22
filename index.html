@@ -1,0 +1,540 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Directory</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #e9ecef;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --border-radius: 0.5rem;
+            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .view {
+            display: none;
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .view.active {
+            display: block;
+        }
+        
+        #directory-view {
+            max-width: 1200px;
+        }
+
+        .view h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--dark-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            font-size: 1rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        
+        .nav-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        
+        .message {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+            text-align: center;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .warning-text {
+            color: var(--danger-color);
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        /* Directory View Specific Styles */
+        #directory-view header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        #directory-view header h2 {
+           margin-bottom: 0;
+        }
+
+        #search-bar {
+            flex-grow: 1;
+            max-width: 400px;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            font-size: 1rem;
+        }
+
+        #logout-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        #user-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .user-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-card p {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+            color: var(--secondary-color);
+        }
+        
+        .user-card p strong {
+            color: var(--dark-color);
+        }
+        
+        .app-footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            #directory-view header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- Registration View -->
+        <div id="registration-view" class="view">
+            <h2>Create Your Account</h2>
+            <div id="register-message" class="message"></div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-fullName">Full Name</label>
+                    <input type="text" id="reg-fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-designation">Designation</label>
+                    <input type="text" id="reg-designation" placeholder="e.g., Software Engineer" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-address">Address</label>
+                    <input type="text" id="reg-address" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-contactInfo">Contact Info</label>
+                    <input type="tel" id="reg-contactInfo" placeholder="e.g., 555-123-4567" required>
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+            <a class="nav-link" onclick="showView('login-view')">Already have an account? Login</a>
+        </div>
+
+        <!-- Login View -->
+        <div id="login-view" class="view active">
+            <h2>Team Directory Login</h2>
+            <div id="login-message" class="message"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <a class="nav-link" onclick="showView('registration-view')">Need an account? Register</a>
+            <a class="nav-link" onclick="showView('forgot-password-view')">Forgot Password?</a>
+        </div>
+        
+        <!-- Forgot Password View -->
+        <div id="forgot-password-view" class="view">
+            <h2>Forgot Password</h2>
+            <p class="warning-text">For demonstration only. Insecure.</p>
+            <div id="forgot-message" class="message"></div>
+            <form id="forgot-form">
+                <div class="form-group">
+                    <label for="forgot-email">Enter your email</label>
+                    <input type="email" id="forgot-email" required>
+                </div>
+                <button type="submit" class="btn">Retrieve Password</button>
+            </form>
+             <a class="nav-link" onclick="showView('login-view')">Back to Login</a>
+        </div>
+
+        <!-- Team Directory View -->
+        <div id="directory-view" class="view">
+            <header>
+                <h2>Team Directory</h2>
+                <input type="search" id="search-bar" placeholder="Search by name or designation...">
+                <button id="logout-btn">Logout</button>
+            </header>
+            <div id="user-cards-container">
+                <!-- User cards will be dynamically inserted here -->
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="app-footer">
+        Notice: This is a local-only application. All data is stored exclusively in this browser.
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // IMPORTANT: Storing passwords in localStorage is insecure and is implemented this way for demonstration purposes only.
+    const STORAGE_KEY = 'teamDirectoryUsers';
+
+    // --- UTILITY FUNCTIONS ---
+    const getUsers = () => {
+        const users = localStorage.getItem(STORAGE_KEY);
+        return users ? JSON.parse(users) : [];
+    };
+
+    const saveUsers = (users) => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    };
+    
+    const showView = (viewId) => {
+        document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+        const targetView = document.getElementById(viewId);
+        if (targetView) {
+            targetView.classList.add('active');
+        }
+    };
+
+    const showMessage = (elementId, text, type = 'error') => {
+        const el = document.getElementById(elementId);
+        el.textContent = text;
+        el.className = `message ${type}`;
+    };
+
+    const hideMessage = (elementId) => {
+        const el = document.getElementById(elementId);
+        el.textContent = '';
+        el.className = 'message';
+    };
+
+
+    // --- VIEW LOGIC ---
+
+    // REGISTRATION
+    const handleRegistration = (e) => {
+        e.preventDefault();
+        hideMessage('register-message');
+        
+        const fullName = document.getElementById('reg-fullName').value.trim();
+        const email = document.getElementById('reg-email').value.trim().toLowerCase();
+        const password = document.getElementById('reg-password').value.trim();
+        const designation = document.getElementById('reg-designation').value.trim();
+        const address = document.getElementById('reg-address').value.trim();
+        const contactInfo = document.getElementById('reg-contactInfo').value.trim();
+
+        if (!fullName || !email || !password || !designation || !address || !contactInfo) {
+            showMessage('register-message', 'All fields are required.');
+            return;
+        }
+
+        const users = getUsers();
+        if (users.some(user => user.email === email)) {
+            showMessage('register-message', 'Email already registered.');
+            return;
+        }
+
+        const newUser = {
+            id: email, // Use email as unique ID for simplicity
+            fullName,
+            email,
+            password, // Storing plain text password as per requirement
+            designation,
+            address,
+            contactInfo
+        };
+
+        users.push(newUser);
+        saveUsers(users);
+        
+        document.getElementById('register-form').reset();
+        showMessage('login-message', 'Registration successful! Please log in.', 'success');
+        showView('login-view');
+    };
+
+    // LOGIN
+    const handleLogin = (e) => {
+        e.preventDefault();
+        hideMessage('login-message');
+
+        const email = document.getElementById('login-email').value.trim().toLowerCase();
+        const password = document.getElementById('login-password').value.trim();
+
+        if (!email || !password) {
+            showMessage('login-message', 'Please enter both email and password.');
+            return;
+        }
+
+        const users = getUsers();
+        const user = users.find(u => u.email === email && u.password === password);
+
+        if (user) {
+            document.getElementById('login-form').reset();
+            renderDirectory();
+            showView('directory-view');
+        } else {
+            showMessage('login-message', 'Invalid email or password.');
+        }
+    };
+    
+    // FORGOT PASSWORD
+    const handleForgotPassword = (e) => {
+        e.preventDefault();
+        hideMessage('forgot-message');
+
+        const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+        if (!email) {
+            showMessage('forgot-message', 'Please enter an email address.');
+            return;
+        }
+        
+        const users = getUsers();
+        const user = users.find(u => u.email === email);
+        
+        if (user) {
+            showMessage('forgot-message', `Your password is: ${user.password}`, 'info');
+        } else {
+            showMessage('forgot-message', 'Email not found.');
+        }
+    };
+    
+    // DIRECTORY VIEW
+    const renderDirectory = (searchTerm = '') => {
+        const container = document.getElementById('user-cards-container');
+        const users = getUsers();
+        const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+        const filteredUsers = users.filter(user => 
+            user.fullName.toLowerCase().includes(lowerCaseSearchTerm) ||
+            user.designation.toLowerCase().includes(lowerCaseSearchTerm)
+        );
+
+        container.innerHTML = ''; // Clear previous cards
+
+        if (filteredUsers.length === 0) {
+            container.innerHTML = `<p>No users found.</p>`;
+            return;
+        }
+
+        filteredUsers.forEach(user => {
+            const card = document.createElement('div');
+            card.className = 'user-card';
+            card.innerHTML = `
+                <h3>${user.fullName}</h3>
+                <p><strong>Designation:</strong> ${user.designation}</p>
+                <p><strong>Address:</strong> ${user.address}</p>
+                <p><strong>Contact:</strong> ${user.contactInfo}</p>
+            `;
+            container.appendChild(card);
+        });
+    };
+
+    const handleSearch = (e) => {
+        renderDirectory(e.target.value);
+    };
+
+    // LOGOUT
+    const handleLogout = () => {
+        document.getElementById('search-bar').value = ''; // Clear search
+        hideMessage('login-message');
+        showView('login-view');
+    };
+
+    // --- INITIALIZATION & EVENT LISTENERS ---
+    
+    // Check if storage exists, if not, create it
+    if (!localStorage.getItem(STORAGE_KEY)) {
+        saveUsers([]);
+    }
+
+    // Attach event listeners
+    document.getElementById('register-form').addEventListener('submit', handleRegistration);
+    document.getElementById('login-form').addEventListener('submit', handleLogin);
+    document.getElementById('forgot-form').addEventListener('submit', handleForgotPassword);
+    document.getElementById('search-bar').addEventListener('input', handleSearch);
+    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+    // Set initial view
+    // The default view is already set with the 'active' class in HTML, so this is not strictly needed,
+    // but it's good practice for clarity.
+    showView('login-view');
+
+});
+
+// Make showView globally accessible for inline onclick attributes
+function showView(viewId) {
+    document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+    const targetView = document.getElementById(viewId);
+    if (targetView) {
+        targetView.classList.add('active');
+        // Clear any messages when switching views
+        document.querySelectorAll('.message').forEach(msg => {
+            msg.textContent = '';
+            msg.className = 'message';
+        });
+    }
+}
+</script>
+</body>
+</html> 
