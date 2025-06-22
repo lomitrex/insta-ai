@@ -1,0 +1,517 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Directory</title>
+    <style>
+        :root {
+            --primary-color: #0d47a1;
+            --secondary-color: #1976d2;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #424242;
+            --text-color: #333;
+            --white: #ffffff;
+            --danger-color: #d32f2f;
+            --success-color: #388e3c;
+            --warning-color: #f57c00;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .view {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .form-container {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
+            margin: auto;
+        }
+        
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: var(--primary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .form-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .form-link a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .message.error {
+            background-color: #ffebee;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .message.success {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        
+        .message.warning {
+            background-color: #fff3e0;
+            color: var(--warning-color);
+            border: 1px solid var(--warning-color);
+        }
+
+        /* Directory View Styles */
+        #directoryView header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        #directoryView h1 {
+            color: var(--primary-color);
+        }
+
+        #logoutBtn {
+            background-color: var(--danger-color);
+            padding: 10px 20px;
+            font-size: 14px;
+            width: auto;
+        }
+        
+        #searchBar {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 15px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        #userCardsContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            background-color: var(--white);
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+        }
+
+        .user-card p {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            color: var(--dark-gray);
+        }
+        .user-card p strong {
+            color: var(--text-color);
+        }
+
+        footer {
+            background-color: var(--dark-gray);
+            color: var(--light-gray);
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            #directoryView header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- Login View -->
+        <section id="loginView" class="view">
+            <div class="form-container">
+                <h2>Team Directory Login</h2>
+                <div id="loginMessage"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                <div class="form-link">
+                    <a href="#" id="goToForgotPassword">Forgot Password?</a>
+                </div>
+                <div class="form-link">
+                    <p>Don't have an account? <a href="#" id="goToRegister">Register here</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration View -->
+        <section id="registerView" class="view" style="display: none;">
+            <div class="form-container">
+                <h2>Create Account</h2>
+                <div id="registerMessage"></div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regFullName">Full Name</label>
+                        <input type="text" id="regFullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regDesignation">Designation (Job Title)</label>
+                        <input type="text" id="regDesignation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regAddress">Address</label>
+                        <input type="text" id="regAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regContactInfo">Contact Info (Phone)</label>
+                        <input type="tel" id="regContactInfo" required>
+                    </div>
+                    <button type="submit" class="btn">Register</button>
+                </form>
+                <div class="form-link">
+                    <p>Already have an account? <a href="#" id="goToLoginFromRegister">Login here</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forgot Password View -->
+        <section id="forgotPasswordView" class="view" style="display: none;">
+            <div class="form-container">
+                <h2>Forgot Password</h2>
+                <div class="message warning">For demonstration only. Insecure.</div>
+                <div id="forgotPasswordMessage"></div>
+                <form id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label for="forgotEmail">Enter your Email</label>
+                        <input type="email" id="forgotEmail" required>
+                    </div>
+                    <button type="submit" class="btn">Retrieve Password</button>
+                </form>
+                <div class="form-link">
+                    <a href="#" id="goToLoginFromForgot">Back to Login</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Team Directory View -->
+        <section id="directoryView" class="view" style="display: none;">
+            <header>
+                <h1>Team Directory</h1>
+                <input type="search" id="searchBar" placeholder="Search by name or designation...">
+                <button id="logoutBtn" class="btn">Logout</button>
+            </header>
+            <div id="userCardsContainer">
+                <!-- User cards will be dynamically inserted here -->
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        Notice: This is a local-only application. All data is stored exclusively in this browser.
+    </footer>
+
+    <script>
+        // IMPORTANT: Storing passwords in plain text in localStorage is highly insecure and is for demonstration purposes only.
+        // In a real-world application, passwords must be hashed.
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const STORAGE_KEY = 'teamDirectoryUsers';
+
+            // --- View and Element References ---
+            const views = document.querySelectorAll('.view');
+            const loginView = document.getElementById('loginView');
+            const registerView = document.getElementById('registerView');
+            const forgotPasswordView = document.getElementById('forgotPasswordView');
+            const directoryView = document.getElementById('directoryView');
+            
+            // Forms
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+
+            // Messages
+            const loginMessage = document.getElementById('loginMessage');
+            const registerMessage = document.getElementById('registerMessage');
+            const forgotPasswordMessage = document.getElementById('forgotPasswordMessage');
+            
+            // Directory Elements
+            const userCardsContainer = document.getElementById('userCardsContainer');
+            const searchBar = document.getElementById('searchBar');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            // Navigation Links
+            const goToRegister = document.getElementById('goToRegister');
+            const goToLoginFromRegister = document.getElementById('goToLoginFromRegister');
+            const goToForgotPassword = document.getElementById('goToForgotPassword');
+            const goToLoginFromForgot = document.getElementById('goToLoginFromForgot');
+
+            // --- Utility Functions ---
+            const getUsers = () => {
+                const users = localStorage.getItem(STORAGE_KEY);
+                return users ? JSON.parse(users) : [];
+            };
+
+            const saveUsers = (users) => {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+            };
+
+            const showView = (viewId) => {
+                views.forEach(view => {
+                    view.style.display = view.id === viewId ? 'block' : 'none';
+                });
+                // Clear messages when switching views
+                loginMessage.innerHTML = '';
+                registerMessage.innerHTML = '';
+                forgotPasswordMessage.innerHTML = '';
+            };
+
+            const showMessage = (element, text, type) => {
+                element.innerHTML = `<div class="message ${type}">${text}</div>`;
+            };
+
+            // --- Initial Setup ---
+            if (!localStorage.getItem(STORAGE_KEY)) {
+                saveUsers([]);
+            }
+
+            // --- View Rendering ---
+            const renderDirectory = () => {
+                userCardsContainer.innerHTML = '';
+                const users = getUsers();
+                users.forEach(user => {
+                    const card = document.createElement('div');
+                    card.className = 'user-card';
+                    // Add data attributes for live search
+                    card.dataset.name = user.fullName.toLowerCase();
+                    card.dataset.designation = user.designation.toLowerCase();
+                    
+                    card.innerHTML = `
+                        <h3>${user.fullName}</h3>
+                        <p><strong>Designation:</strong> ${user.designation}</p>
+                        <p><strong>Address:</strong> ${user.address}</p>
+                        <p><strong>Contact:</strong> ${user.contactInfo}</p>
+                    `;
+                    userCardsContainer.appendChild(card);
+                });
+            };
+
+            // --- Event Listeners ---
+
+            // Navigation
+            goToRegister.addEventListener('click', (e) => { e.preventDefault(); showView('registerView'); });
+            goToLoginFromRegister.addEventListener('click', (e) => { e.preventDefault(); showView('loginView'); });
+            goToForgotPassword.addEventListener('click', (e) => { e.preventDefault(); showView('forgotPasswordView'); });
+            goToLoginFromForgot.addEventListener('click', (e) => { e.preventDefault(); showView('loginView'); });
+
+            // Registration Form
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const users = getUsers();
+                const fullName = document.getElementById('regFullName').value;
+                const email = document.getElementById('regEmail').value;
+                const password = document.getElementById('regPassword').value;
+                const designation = document.getElementById('regDesignation').value;
+                const address = document.getElementById('regAddress').value;
+                const contactInfo = document.getElementById('regContactInfo').value;
+
+                if (users.find(user => user.email === email)) {
+                    showMessage(registerMessage, 'Email already registered.', 'error');
+                    return;
+                }
+
+                const newUser = {
+                    id: email, // Using email as unique ID
+                    fullName, email, password, designation, address, contactInfo
+                };
+                
+                users.push(newUser);
+                saveUsers(users);
+                
+                registerForm.reset();
+                showMessage(registerMessage, 'Registration successful! You can now <a href="#" id="linkToLoginAfterReg">login</a>.', 'success');
+                document.getElementById('linkToLoginAfterReg').addEventListener('click', (e) => { e.preventDefault(); showView('loginView'); });
+            });
+
+            // Login Form
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const users = getUsers();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+
+                const user = users.find(u => u.email === email && u.password === password);
+
+                if (user) {
+                    // Using sessionStorage to keep track of logged in state for this session only
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+                    renderDirectory();
+                    showView('directoryView');
+                    loginForm.reset();
+                } else {
+                    showMessage(loginMessage, 'Invalid email or password.', 'error');
+                }
+            });
+
+            // Forgot Password Form
+            forgotPasswordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const users = getUsers();
+                const email = document.getElementById('forgotEmail').value;
+                const user = users.find(u => u.email === email);
+                
+                if (user) {
+                    showMessage(forgotPasswordMessage, `Password for ${user.email}: <strong>${user.password}</strong>`, 'success');
+                } else {
+                    showMessage(forgotPasswordMessage, 'User with that email not found.', 'error');
+                }
+            });
+
+            // Logout Button
+            logoutBtn.addEventListener('click', () => {
+                sessionStorage.removeItem('loggedInUser');
+                showView('loginView');
+            });
+
+            // Search Bar
+            searchBar.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('.user-card');
+                cards.forEach(card => {
+                    const name = card.dataset.name;
+                    const designation = card.dataset.designation;
+                    const isVisible = name.includes(searchTerm) || designation.includes(searchTerm);
+                    card.style.display = isVisible ? 'block' : 'none';
+                });
+            });
+
+            // --- Initial App State ---
+            if (sessionStorage.getItem('loggedInUser')) {
+                renderDirectory();
+                showView('directoryView');
+            } else {
+                showView('loginView');
+            }
+        });
+    </script>
+</body>
+</html> 
