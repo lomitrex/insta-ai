@@ -1,0 +1,310 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Directory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles can go here if needed */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple transition for view switching */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex flex-col">
+
+    <main class="flex-grow container mx-auto p-4 md:p-8">
+        <!-- Registration Section -->
+        <div id="registration-section" class="view-section max-w-lg mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">Create Your Account</h2>
+                <div id="registration-message" class="mb-4 text-center"></div>
+                <form id="registration-form">
+                    <div class="mb-4">
+                        <label for="reg-fullName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Full Name</label>
+                        <input type="text" id="reg-fullName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="reg-email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Email</label>
+                        <input type="email" id="reg-email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="reg-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Password</label>
+                        <input type="password" id="reg-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="reg-designation" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Designation</label>
+                        <input type="text" id="reg-designation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="reg-address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Address</label>
+                        <input type="text" id="reg-address" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="reg-contactInfo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Contact Info</label>
+                        <input type="text" id="reg-contactInfo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Register</button>
+                </form>
+                <p class="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
+                    Already have an account? <a href="#" id="goto-login-from-reg" class="font-medium text-blue-600 hover:underline dark:text-blue-500">Login here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Login Section -->
+        <div id="login-section" class="view-section max-w-md mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">Team Directory Login</h2>
+                <div id="login-message" class="mb-4 text-center"></div>
+                <form id="login-form">
+                    <div class="mb-4">
+                        <label for="login-email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Email</label>
+                        <input type="email" id="login-email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="login-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Password</label>
+                        <input type="password" id="login-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
+                </form>
+                <div class="mt-6 text-sm text-center text-gray-600 dark:text-gray-400 flex justify-between">
+                    <a href="#" id="goto-forgot-password" class="font-medium text-blue-600 hover:underline dark:text-blue-500">Forgot Password?</a>
+                    <a href="#" id="goto-register-from-login" class="font-medium text-blue-600 hover:underline dark:text-blue-500">Create Account</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Forgot Password Section -->
+        <div id="forgot-password-section" class="view-section max-w-md mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-white">Retrieve Password</h2>
+                <div class="mb-4 p-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 border border-yellow-300" role="alert">
+                  <span class="font-medium">For demonstration only. Insecure.</span>
+                </div>
+                <div id="forgot-password-message" class="mb-4 text-center"></div>
+                <form id="forgot-password-form">
+                    <div class="mb-4">
+                        <label for="forgot-email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Enter your Email</label>
+                        <input type="email" id="forgot-email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    </div>
+                    <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Retrieve Password</button>
+                </form>
+                 <p class="mt-6 text-sm text-center">
+                    <a href="#" id="goto-login-from-forgot" class="font-medium text-blue-600 hover:underline dark:text-blue-500">Back to Login</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Main Team Directory Section -->
+        <div id="directory-section" class="view-section">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Team Directory</h1>
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <input type="search" id="search-bar" placeholder="Search by Name or Designation..." class="block w-full md:w-64 p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                    <button id="logout-button" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Logout</button>
+                </div>
+            </div>
+            <div id="user-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- User cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-center p-4 text-sm fixed bottom-0 left-0 right-0">
+        Notice: This is a local-only application. All data is stored exclusively in this browser.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // SECURITY WARNING: Storing passwords in plain text in localStorage is highly insecure and is done here only for demonstration purposes. In a real-world application, never store sensitive data this way.
+
+            const STORAGE_KEY = 'teamDirectoryUsers';
+
+            // View Sections
+            const registrationSection = document.getElementById('registration-section');
+            const loginSection = document.getElementById('login-section');
+            const forgotPasswordSection = document.getElementById('forgot-password-section');
+            const directorySection = document.getElementById('directory-section');
+            const allSections = [registrationSection, loginSection, forgotPasswordSection, directorySection];
+
+            // Forms
+            const registrationForm = document.getElementById('registration-form');
+            const loginForm = document.getElementById('login-form');
+            const forgotPasswordForm = document.getElementById('forgot-password-form');
+            
+            // Message Elements
+            const regMessage = document.getElementById('registration-message');
+            const loginMessage = document.getElementById('login-message');
+            const forgotMessage = document.getElementById('forgot-password-message');
+
+            // Directory Elements
+            const userGrid = document.getElementById('user-grid');
+            const searchBar = document.getElementById('search-bar');
+            const logoutButton = document.getElementById('logout-button');
+            
+            // Navigation Links
+            const gotoLoginFromReg = document.getElementById('goto-login-from-reg');
+            const gotoRegisterFromLogin = document.getElementById('goto-register-from-login');
+            const gotoForgotPassword = document.getElementById('goto-forgot-password');
+            const gotoLoginFromForgot = document.getElementById('goto-login-from-forgot');
+
+            // --- Utility Functions ---
+            const getUsers = () => {
+                const users = localStorage.getItem(STORAGE_KEY);
+                return users ? JSON.parse(users) : [];
+            };
+
+            const saveUsers = (users) => {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+            };
+
+            const showView = (viewToShow) => {
+                allSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                if(viewToShow) {
+                    viewToShow.style.display = 'block';
+                }
+            };
+            
+            const showMessage = (element, message, isError = false) => {
+                element.textContent = message;
+                element.className = `mb-4 p-3 rounded-lg text-sm ${isError ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'}`;
+            };
+
+            // --- View Rendering ---
+            const renderDirectory = () => {
+                const users = getUsers();
+                userGrid.innerHTML = '';
+                if(users.length === 0) {
+                    userGrid.innerHTML = `<p class="col-span-full text-center">No team members found.</p>`;
+                    return;
+                }
+                users.forEach(user => {
+                    const card = document.createElement('div');
+                    card.className = 'user-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col gap-2 transform hover:scale-105 transition-transform duration-300';
+                    card.innerHTML = `
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white truncate">${user.fullName}</h3>
+                        <p class="text-blue-500 font-semibold">${user.designation}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-medium">Address:</span> ${user.address}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-medium">Contact:</span> ${user.contactInfo}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400"><span class="font-medium">Email:</span> ${user.email}</p>
+                    `;
+                    userGrid.appendChild(card);
+                });
+            };
+
+            // --- Event Handlers ---
+            registrationForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const users = getUsers();
+                const fullName = document.getElementById('reg-fullName').value;
+                const email = document.getElementById('reg-email').value;
+                const password = document.getElementById('reg-password').value;
+                const designation = document.getElementById('reg-designation').value;
+                const address = document.getElementById('reg-address').value;
+                const contactInfo = document.getElementById('reg-contactInfo').value;
+
+                if (users.some(user => user.email === email)) {
+                    showMessage(regMessage, 'Email already registered.', true);
+                    return;
+                }
+
+                const newUser = {
+                    id: email, // Using email as a unique ID
+                    fullName, email, password, designation, address, contactInfo
+                };
+
+                users.push(newUser);
+                saveUsers(users);
+                
+                showMessage(regMessage, 'Registration successful! Please log in.');
+                registrationForm.reset();
+                setTimeout(() => showView(loginSection), 1000);
+            });
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const users = getUsers();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+
+                const foundUser = users.find(user => user.email === email && user.password === password);
+
+                if (foundUser) {
+                    loginForm.reset();
+                    loginMessage.textContent = '';
+                    renderDirectory();
+                    showView(directorySection);
+                } else {
+                    showMessage(loginMessage, 'Invalid email or password.', true);
+                }
+            });
+
+            forgotPasswordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const users = getUsers();
+                const email = document.getElementById('forgot-email').value;
+                
+                const foundUser = users.find(user => user.email === email);
+                
+                if (foundUser) {
+                    showMessage(forgotMessage, `Password for ${foundUser.email} is: ${foundUser.password}`);
+                } else {
+                    showMessage(forgotMessage, 'User not found.', true);
+                }
+            });
+
+            logoutButton.addEventListener('click', () => {
+                showView(loginSection);
+            });
+
+            searchBar.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const userCards = document.querySelectorAll('.user-card');
+                
+                userCards.forEach(card => {
+                    const cardText = card.textContent.toLowerCase();
+                    if (cardText.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+
+            // --- Navigation Logic ---
+            const setupNavigation = () => {
+                gotoLoginFromReg.addEventListener('click', (e) => { e.preventDefault(); showView(loginSection); });
+                gotoRegisterFromLogin.addEventListener('click', (e) => { e.preventDefault(); showView(registrationSection); });
+                gotoForgotPassword.addEventListener('click', (e) => { e.preventDefault(); showView(forgotPasswordSection); });
+                gotoLoginFromForgot.addEventListener('click', (e) => { e.preventDefault(); showView(loginSection); });
+            };
+
+            // --- Initializer ---
+            const init = () => {
+                setupNavigation();
+                const users = getUsers();
+                if (users.length === 0) {
+                    showView(registrationSection);
+                } else {
+                    showView(loginSection);
+                }
+            };
+
+            init();
+        });
+    </script>
+</body>
+</html> 
